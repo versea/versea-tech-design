@@ -1,0 +1,8 @@
+{
+  "gitlens.remotes": [
+    {
+      "domain": "github.com",
+      "type": "GitHub"
+    }
+  ]
+}
