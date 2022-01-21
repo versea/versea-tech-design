@@ -1,7 +1,10 @@
 {
   "version": "0.2",
   "language": "en",
-  "ignoreWords": [
+  "words": [
+    "enduml",
+    "plantuml",
+    "startuml",
     "versea",
     "Versea",
     "autorun",
