@@ -8,22 +8,30 @@ versea 是一个微前端框架
 
 1. 嵌套能力弱。虽然各种框架都有实现嵌套能力，但是普遍存在多级基座的问题，如下图所示，`ChildApp` 既是 `MainApp` 的子应用，也是 `SubChildApp` 的主应用，是一个二级基座，这样的设计造成信息在 `MainApp` 丢失，如：`MainApp` 无法直接决定 `SubChildApp` 在在哪个页面渲染，是否需要渲染。这样的场景通常出现在权限和404 设计中。
 
+<div hidden>
+
 ```plantuml
 @startuml
 rectangle MainApp #F5F5F5 {
   rectangle ChildApp #F8CECC {
-    rectangle SubChildApp    
+    rectangle SubChildApp {
+    }
   }
 }
 
 note top of ChildApp
   基座应用还是子应用？
 end note
-
 @enduml
 ```
 
-2. 嵌套情况下，加载速度不如预期
+</div>
+
+![](https://www.plantuml.com/plantuml/svg/SoWkIImgAStDuIfAJIv9p4lFILNmJSpCSomeK51sCmL1XMek1GM4h7D6PauAHDh2sTNP6IoDh22uD0ck1WY0ihLSjLnSUVabgGeb-GKA-MbmCu1oJ-VlUhfh-TDTKvvFMV5Y_undCzO_NJi1mds_PpvNQbwA0aWdbmEG1NGc0000)
+
+1. 嵌套情况下，加载速度不如预期
+
+<div hidden>
 
 ```plantuml
 @startuml
@@ -36,7 +44,14 @@ ChildApp -> SubChildApp: 渲染 SubChildApp
 @enduml
 ```
 
+</div>
+
+![](https://www.plantuml.com/plantuml/svg/SoWkIImgAStDuV9DpCnpB2XGqBLJSCx8p4a1igqKddOjUB5tBro02ym0gm8gW-Z0LANmT5tFiuu9s4ryjcFJi_cJqKo4gWekJKAt6bcC2y96E02dOeGZqCr7TmYA-GwfUId0e000)
+
+
 预期如下:
+
+<div hidden>
 
 ```plantuml
 @startuml
@@ -53,7 +68,11 @@ end
 @enduml
 ```
 
-3. 插件能力不足
+</div>
+
+![](https://www.plantuml.com/plantuml/svg/SoWkIImgAStDuKeloYyjK7YwSzkBXJrFknQysBkNIq71Dp4ppx6WG47NJi4v8pCd1SYsKe38mWLGbGMN9g6hH1RZIirBWLhrPCSce5NFTcnwDdyo5qnUGLVN3ceSfaqAJzVrFEkOm8NLLH234Au2MehNKA0yRdCHiWYZKNLqR41orje9JzVjV3fp1TXt3a026A00)
+
+1. 插件能力不足
 目前微前端普遍只有 dispatch Event，但是无法改变加载和渲染行为。因此只能获取事件，但是无法增加插件，也就完成修改加载顺序，自定义沙箱这样的需求。
 
 ### 目标
