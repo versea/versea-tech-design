@@ -8,8 +8,7 @@ versea 是一个微前端框架
 
 1. 嵌套能力弱。虽然各种框架都有实现嵌套能力，但是普遍存在多级基座的问题，如下图所示，`ChildApp` 既是 `MainApp` 的子应用，也是 `SubChildApp` 的主应用，是一个二级基座，这样的设计造成信息在 `MainApp` 丢失，如：`MainApp` 无法直接决定 `SubChildApp` 在在哪个页面渲染，是否需要渲染。这样的场景通常出现在权限和404 设计中。
 
-<div hidden>
-
+<!--
 ```plantuml
 @startuml
 rectangle MainApp #F5F5F5 {
@@ -24,6 +23,7 @@ note top of ChildApp
 end note
 @enduml
 ```
+-->
 
 </div>
 
@@ -31,28 +31,25 @@ end note
 
 1. 嵌套情况下，加载速度不如预期
 
-<div hidden>
-
+<!--
 ```plantuml
 @startuml
 MainApp -> ChildApp: 加载 ChildApp
-ChildApp --> MainApp: 加载 ChildApp 完成
+MainApp <-- ChildApp: 加载 ChildApp 完成
 MainApp -> ChildApp: 渲染 ChildApp
 ChildApp -> SubChildApp: 加载 SubChildApp
-SubChildApp --> ChildApp: 加载 SubChildApp 完成
+ChildApp <-- SubChildApp: 加载 SubChildApp 完成
 ChildApp -> SubChildApp: 渲染 SubChildApp
 @enduml
 ```
-
-</div>
+-->
 
 ![](https://www.plantuml.com/plantuml/svg/SoWkIImgAStDuV9DpCnpB2XGqBLJSCx8p4a1igqKddOjUB5tBro02ym0gm8gW-Z0LANmT5tFiuu9s4ryjcFJi_cJqKo4gWekJKAt6bcC2y96E02dOeGZqCr7TmYA-GwfUId0e000)
 
 
 预期如下:
 
-<div hidden>
-
+<!--
 ```plantuml
 @startuml
 group 并行加载
@@ -60,15 +57,14 @@ group 并行加载
   MainApp -> SubChildApp: 加载 SubChildApp
 end
 group 串行渲染
-ChildApp --> MainApp: 加载 ChildApp 完成
+MainApp <-- ChildApp: 加载 ChildApp 完成
 MainApp -> ChildApp: 渲染 ChildApp
-SubChildApp --> MainApp: 加载 SubChildApp 完成
+MainApp <-- SubChildApp: 加载 SubChildApp 完成
 MainApp -> SubChildApp: 渲染 SubChildApp 到 ChildApp 子容器
 end
 @enduml
 ```
-
-</div>
+-->
 
 ![](https://www.plantuml.com/plantuml/svg/SoWkIImgAStDuKeloYyjK7YwSzkBXJrFknQysBkNIq71Dp4ppx6WG47NJi4v8pCd1SYsKe38mWLGbGMN9g6hH1RZIirBWLhrPCSce5NFTcnwDdyo5qnUGLVN3ceSfaqAJzVrFEkOm8NLLH234Au2MehNKA0yRdCHiWYZKNLqR41orje9JzVjV3fp1TXt3a026A00)
 
