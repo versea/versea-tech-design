@@ -1,6 +1,6 @@
 # Tapable
 
-Tapable 并不陌生，一个发布订阅模式，Versea 的 Tapable 和 webpack 的 [Tapable](https://juejin.cn/post/7040982789650382855) 基本相似，有少许区别。
+我们对 Tapable 并不陌生，一种发布订阅模式，Versea 的 Tapable 和 webpack 的 [Tapable](https://juejin.cn/post/7040982789650382855) 相似，仅仅少量区别。
 
 Versea 有三种钩子：`AsyncParallelHook`, `AsyncSeriesHook`, `SyncHook`。
 
@@ -122,7 +122,7 @@ hook.tap('bhook', async context => {
   before: 'ahook'
 })
 
-hook.call({ foo: 'hello' }) // 不执行 ahook
+hook.call({ foo: 'hello' });
 ```
 
 

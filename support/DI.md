@@ -6,9 +6,9 @@ DI 是 Versea 的核心设计模式。
 
 DI 相关[介绍](https://juejin.cn/post/7073361691609661453)
 
-Versea 使用了 `inversify` 这套 DI 框架，参考[文档](https://inversify.io/)。
+Versea 使用了 `inversify` 这个 DI 框架，参考[文档](https://inversify.io/)。
 
-Versea 仅仅使用了 `inversify` 的最简单的能力，没有过多的封装。使用如下：
+简单使用如下：
 
 ```typescript
 import { Container, injectable } from 'inversify';
@@ -39,19 +39,19 @@ container.get(Bar).bar() // hello
 
 ### Auto Binding
 
-上面的代码最后几行需要手动绑定，使用者使用不太方便，如果能自动绑定会更好。
+上面的代码最后几行需要手动绑定，用户使用不太方便，如果能自动绑定会更好。
 
 #### Auto Binding 原理
 
-1. 提供一个 prodive 装饰器，将每个被 prodive 装饰的类都存起来。
-2. 提供一个 bind 方法，循环绑定存起来的类。
+1. 使用 provide 装饰器替换 injectable 装饰器，provide 装饰的类会存到 state 内。
+2. 提供一个 bind 方法，循环 state 执行绑定类。
 
 ```typescript
 import { Container, injectable, inject } from 'inversify';
 
 const state  = {};
 
-function prodive(name: string) {
+function provide(name: string) {
   return function(target: any) {
     state[name] = target
   };
@@ -83,7 +83,7 @@ class Bar {
   public bar() { return this._foo.foo(); };
 }
 
-// 使用者使用
+// 用户使用
 const container = new Container();
 bind(container);
 ```
@@ -94,14 +94,14 @@ bind(container);
 
 ### 替换
 
-1. 使用 prodive 装饰器装饰另一个类，但 name 需要与被替换的类的名称相同
-2. 经过这样 prodive，存在来的类就被替换掉了。
+1. 使用 provide 装饰器装饰另一个类，但 name 需要与被替换的类的名称相同
+2. 经过 provide 装饰器如此装饰，存在来的类就被替换掉了。
 
-基于替换能力，Versea 的任何逻辑都是可以被深度使用者在外部修改。
+基于替换能力，Versea 的任何逻辑都可以被用户在外部修改，也就做到了可扩展能力。
 
 ```typescript
 import { Container, injectable, inject } from 'inversify';
-import { provide, bind } from 'my-prodive'
+import { provide, bind } from 'my-provide'
 
 @provide('Foo')
 class Foo {
@@ -122,8 +122,8 @@ class Bar {
   public bar() { return this._foo.foo(); };
 }
 
-// 使用者使用
-@prodive('Bar')
+// 用户使用
+@provide('Bar')
 class NewBar extends Bar {
   public bar() { return super.bar() + ',world';  };
 }
@@ -143,7 +143,7 @@ container.get('Bar').bar() // hello,world
 
 ```typescript
 import { Container, injectable, inject } from 'inversify';
-import { provide } from 'my-prodive'
+import { provide } from 'my-provide'
 
 @provide('Foo')
 class Foo {
@@ -174,7 +174,7 @@ class Bar {
 }
 ```
 
-假设我们在取值的时候才会去实例化，就可以解决循环依赖的问题。
+假设我们把实例化后移，不在 constructor 内执行依赖类的实例化，而在使用的时候才实例化，依次解决循环依赖的问题。
 
 1. 把 `Foo` 内的 `@inject('Bar')` 去掉，增加 `@lazyInject('Bar') _bar`。
 2. 仅仅调用 log 方法的时候，才会去获取 Bar 的实例。
@@ -183,7 +183,7 @@ class Bar {
 
 ```typescript
 import { Container, injectable, inject } from 'inversify';
-import { provide } from 'my-prodive'
+import { provide } from 'my-provide'
 
 function lazyInject(name: string) {
   return function(target: any, key) {
@@ -191,7 +191,7 @@ function lazyInject(name: string) {
       configurable: true,
       enumerable: true,
       get(this: object) {
-        // 使用者才会生成 container，这里怎么获取到 container 呢？
+        // 用户才会生成 container，这里怎么获取到 container 呢？
         return container.get(name);
       },
     });
@@ -223,9 +223,9 @@ class Bar {
 }
 ```
 
-上面遗留一个取不到 `container` 的问题
+上面遗留一个取不到 `container` 的问题，`lazyInject` 取不到 `container`，但是 `bind` 可以取到 `container`，可以做出如下修改：
 
-1. `lazyInject` 不再直接使用 `Object.defineProperty` 定义 `get` 方法，而是将注入的名称存在 `target`，也就是这个类的实例上。
+1. `lazyInject` 不再直接使用 `Object.defineProperty` 定义 `get` 方法，将注入的信息存在 `target`（类的实例） 上。
 2. 在 `bind` 方法中取出 `target` 上存储的 `lazyInject` 的信息，循环使用 `Object.defineProperty` 定义 `get` 方法，这里便可以获取到 `container`。
 
 ```typescript
@@ -233,7 +233,7 @@ import { Container, injectable, inject, interfaces } from 'inversify';
 
 const state  = {};
 
-function prodive(name: string) {
+function provide(name: string) {
   return function(target: any) {
     state[name] = target
   };
@@ -286,7 +286,8 @@ class Bar {
 
 ### 接口设计
 
-Versea 的设计在上面的基础上增加了命名空间，将依赖放到了 `ContainerModule`，但原理是一致的。
+1. Versea 在接口设计上，应该增加增加命名空间，避免多个 `Container` 冲突的情况。
+2. 依赖可以放到 `ContainerModule`，而不是 `Container`。
 
 ```typescript
 import 'reflect-metadata';
@@ -309,13 +310,13 @@ interface CreateProviderReturnType {
 export const createProvider: (MetaDataKey: string) => CreateProviderReturnType
 ```
 
-`createProvider` 会创建一个具有命名空间的依赖注入和自动绑定的能力的对象。
+`createProvider` 是创建一个具有命名空间的依赖注入和自动绑定能力的对象。
 
-- `provide` 会自动绑定类
-- `provideValue` 会自动绑定常量，函数等。
-- `buildProviderModule` 会生成一个 `ContainerModule`。
+- `provide` 装饰器可以自动绑定类
+- `provideValue` 函数是自动绑定常量，函数等。
+- `buildProviderModule` 执行会返回一个 `ContainerModule`。
 
-使用方法如下：
+使用如下：
 
 ```typescript
 const { provide, provideValue, buildProviderModule } = createProvider('metaKey');
@@ -331,7 +332,7 @@ expect(container.get('test')).toBeInstanceOf(Test);
 expect(container.get('barKey')).toBe('bar');
 ```
 
-lazyInject 接口如下：
+lazyInject 接口设计：
 
 ```typescript
 export const lazyInject: (serviceIdentifier: interfaces.ServiceIdentifier) => (target: unknown, propertyKey: string) => void
