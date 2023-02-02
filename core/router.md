@@ -1,4 +1,4 @@
-# 路由
+# Router
 
 ### reroute 流程
 
@@ -26,7 +26,7 @@ rectangle "Versea Core" as VerseaCore #F5F5F5;line.dashed {
 
   Router -down-> Router: 1.match routes
   Router -down-> Router: 2.getMatchedRoutesTree
-  Router -down-> AppSwitcher: 3.performance
+  Router -down-> AppSwitcher: 3.switch
   AppSwitcher -down-> AppService: 5.changeApp
   AppService -> AppService: 6. load, mount, unmount
 }
@@ -44,6 +44,9 @@ User -down-> RouterModule: start or event
 ```
 -->
 
-![](https://www.plantuml.com/plantuml/svg/VLF1Yjim4BthAnxEDMjeTrE22sKN9tlgzj1qUnVsR2om9JCQ9uMo_rvPTeaQukABtzDxJpE3vj6BPXcwLkbA7EFL4okcIhGzjeJi9x4dZT8nPT0U4nuXLi-RyVlS6ajvhNr3DNuh875_fpCReM_wP8vQZBFx4rd9r9NA3KAC5rSFxNJBn4m4Lhkd_VQvZDatV5cWtwyId_g-DLMyCGjrRijzcVWJrO7uP2fQo3YSZLHDKjfgjzblTmynQaaS6qZmVwIbiqA_976aj8hEXCTTxSxsxiiDRO67l6BIGZCnDnGdcJWdME13tkdW1u_OB-i-vaUIbr5ATUJy3oQQzRShAd2VzyHlZZjjArBBBKopBx39goOCXmAda9pWIlSfH-jqlKRd1Yjh33R-g7VrwfFeonCjOBhUiQWBDMRUVfLAMIS4SJtSsv86ONBGWpWUBCwDQUdl5GYp0aykz8Dl3gA5re7gMrrHH45qVn7fkewXNuqNiiHej6-cIO36WpLwr_jWdB4YMsCiKltRSBej1U92m_7iUGociDv_0000)
+![](https://www.plantuml.com/plantuml/png/VLF1Yjim5BphAuRacZMqkod1XRABaprrUsYwlGlxDHR8af6UaaBPVwyifKGDyUABPpGpUXgaHy_ISHYqa2rRXrTFJZXgMPg39Yn-alCaqLX72qYFZ2U8vVDw-ZvhPQZgfE-fmny15ExlT7AAwPiygeDaPStkI8ONuafb0vF3Y-s2phja9XDORfzsc-ScPT_mBIBzTfNuD8vQjMd7HPnpq-oQmb-ezkIEggMPZFr9STiNeostwzrc-v2ZPiJf00L-HzfOm_IR2qT9Y-GiUDnrzcJkljpGrdYeMaUIwKoS3vIQB9mPrlXG3JBwuIRivtKVgmFnooIbBd7-XoCwwszFLEE-ykbVp4-VQw-nhje-zaAH4oXMSANxL45RsQqms61uXM3IZtWJhxw8ljpE6ceOhMDneQRCsnTI26EPm7Q4_JMdGImDCh1rmU3KAqt_ja2i2IwxC0RVxraohI8rQjbIGWAuluXarwNGhyep6NBefUzp4w1fOONHZduoPYp8T9Y65FyVk7meDT9RXdLdpsCqXK7_1G00)
 
-reroute 流程较为复杂，是整个 versea/core 的核心，控制整个应用加载，卸载流程，这里重点介绍一下 AppSwitcherContext，它需要记录 App 的加载顺序，mount 顺序和卸载顺序。当 changeApp 触发时，会生成一个新的 AppSwitcherContext。然后销毁当前的 AppSwitcherContext，使用新的 AppSwitcherContext 替代它。
+reroute 流程较为复杂，是整个 versea/core 的核心，控制整个应用加载，卸载流程，这里重点介绍一下 AppSwitcherContext。
+
+- 每次路由匹配，都会生成一个新的 AppSwitcherContext，AppSwitcher 每次都保留一个最新的 AppSwitcherContext。
+- 每个 AppSwitcherContext 都记录了当前路由信息和本次匹配到的路由信息，在路由切换过程中，只需要比较当前路由信息和匹配到的路由信息的差异，就可以决定如何卸载和加载应用。

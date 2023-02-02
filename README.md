@@ -2,6 +2,11 @@
 
 versea 微前端方案设计和技术白皮书
 
-[简介](./introduction.md)
-
-[核心逻辑](./core/main.md)
+- [简介](./introduction.md)
+- 能力支持
+  - [DI](./support/DI.md)
+  - [IOP](./support/IOP.md)
+  - [可扩展实体类](./support/extensible-entity.md)
+  - [tapable](./support/tapable.md)
+- [核心逻辑](./core/main.md)
+  - [Router](./core/router.md)
