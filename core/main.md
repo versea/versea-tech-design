@@ -40,14 +40,14 @@ User -down-> Router: 2. Location Change
 ```ts
 const foo = {
   name: 'foo',
-  loadApp: async () => {
+  load: async () => {
     return Promise.resolve();
   },
 };
 
 const bar = {
   name: 'bar',
-  loadApp: async () => {
+  load: async () => {
     return Promise.resolve({
       mount: async () => {
         console.log('mount');
