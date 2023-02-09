@@ -134,7 +134,7 @@ const routeArray = [
 
 ### Route Array 匹配路由
 
-给每个 routes 增加一个 fullPath, fullPath 会拼接出来完成的链接, 结构如下：
+给每个 routes 增加一个 fullPath, fullPath 会拼接出完整的链接, 结构如下：
 
 ```ts
 const routes = [

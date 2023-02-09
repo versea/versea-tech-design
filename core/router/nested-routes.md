@@ -31,21 +31,21 @@ const routes = [
 
 我们预期访问 `/foo/bar/baz` 这个 URL 的时候展示上面的页面结构，很明显，现在不能满足要求，路由必须生成嵌套关系。
 
-现在希望 `/bar` 作为 `/foo` 的 children，那么在 `/foo` 声明一个 slot，在 `/bar` 声明一个 fill，并且值相同，那么就可以建议嵌套关系。
+现在希望 `/bar` 作为 `/foo` 的 children，那么在 `/foo` 声明一个 slot，在 `/bar` 声明一个 fill，并且值相同，那么就可以建立嵌套关系。
 
-slot 是一个插槽，可以让其他具有相同 fill 名称的 route 插入这个路由的 children. 
-fill 是一个插入者，他会插入对应名称 slot 的 route 的 children。
+- slot 是一个插槽，可以让其他具有相同 fill 名称的 route 插入这个路由的 children. 
+- fill 是一个插入者，他会插入对应名称 slot 的 route 的 children。
 
 ```ts
 const routes = [
   {
     path: '/foo',
-    slot: 'foo-container1'
+    slot: 'foo-container1',
     apps: [A]
   },
   {
     path: '/bar',
-    fill: 'foo-container1'
+    fill: 'foo-container1',
     apps: [B],
     children: [
       {
@@ -63,12 +63,12 @@ const routes = [
 const routes = [
   {
     path: '/foo',
-    slot: 'foo-container1'
+    slot: 'foo-container1',
     apps: [A],
     children: [
       {
         path: '/bar',
-        fill: 'foo-container1'
+        fill: 'foo-container1',
         apps: [B],
         children: [
           {
