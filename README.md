@@ -16,3 +16,4 @@ versea 微前端方案设计和技术白皮书
     - [碎片和路由合并(难点)](./core/router/fragment-routes.md)
     - [根节点碎片](./core/router/root-fragment.md)
     - [父容器(难点)](./core/router/parent-container.md)
+    - [监听](./core/router/event.md)
